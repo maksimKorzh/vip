@@ -34,7 +34,7 @@ def main(stdscr):
     curses.curs_set(1); s.refresh(); ch = -1
     while (ch == -1): ch = s.getch(); d += 1
     if ch == curses.KEY_RESIZE: R, C = s.getmaxyx(); R -= 1; s.refresh(); y = 0
-    if chr(ch).isdigit() and chr(ch) != '0' and mod != 'r': t += chr(ch);
+    if chr(ch).isdigit() and chr(ch) != '0' and mod not in 'irR': t += chr(ch);
     elif mod == 'n':
       if ch == ord('i'): mod = 'i'
       elif ch == ord('a'): c += 1; mod = 'i'
@@ -46,6 +46,11 @@ def main(stdscr):
       elif ch == ord('x') and len(b[r]): del b[r][c]
       elif ch == ord('G'): r = int(t) if len(t) and int(t) < len(b) else len(b)-1
       elif ch == ord('g'): mod = 'g'
+      elif ch == ord('w'):
+        if chr(b[r][c]).isalpha():
+          while not chr(b[r][c]).isalpha() and c < len(b[r])-1: c += 1
+        if not chr(b[r][c]).isalpha():
+          while chr(b[r][c]).isalpha() and c < len(b[r])-1: c += 1
       elif ch == ord('0'):
         if t == '': c = 0
         else: t += chr(ch)
