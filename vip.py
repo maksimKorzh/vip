@@ -35,7 +35,13 @@ def main(stdscr):
       if ch == ord('i'): mod = 'i'
       elif ch == ord('a'): c += 1; mod = 'i'
       elif ch == ord('A'): c = len(b[r]); mod = 'i'
-
+      elif ch == ord('o'): b.insert(r+1, []); r += 1; mod = 'i'
+      elif ch == ord('O'): b.insert(r, []); mod = 'i'
+      elif ch == ord('r'): mod = 'r'
+      elif ch == ord('R'): mod = 'R'
+      elif ch == ord('0'): c = 0
+      elif ch == ord('$'): c = len(b[r])-1
+      elif ch == ord('x') and len(b[r]): del b[r][c]
 
       elif ch == ord('h'): c -= 1 if c else 0 
       elif ch == ord('l'): c += 1 if c < len(b[r])-1 else 0 
@@ -51,7 +57,12 @@ def main(stdscr):
       elif ch == curses.KEY_BACKSPACE:
         if c: c -= 1; del b[r][c]
         elif r: l = b[r][c:]; del b[r]; r -= 1; c = len(b[r]); b[r] += l
-      
+    elif mod == 'r': b[r][c] = ch; mod = 'n'
+    elif mod == 'R':
+      if ch == 27: mod = 'n'; c -= 1 if c else 0
+      elif ch != ((ch) & 0x1f) and ch < 128: b[r][c] = ch; c += 1;
+      elif ch == curses.KEY_BACKSPACE: c -= 1 if c else 0
+  
     if ch == (ord('q') & 0x1f): sys.exit()
 os.environ.setdefault('ESCDELAY', '25')
 curses.wrapper(main)
