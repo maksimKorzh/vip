@@ -41,6 +41,8 @@ def main(stdscr):
       elif ch == ord('r'): mod = 'r'
       elif ch == ord('R'): mod = 'R'
       elif ch == ord('x') and len(b[r]): del b[r][c]
+      elif ch == ord('G'): r = int(t) if len(t) and int(t) < len(b) else len(b)-1
+      elif ch == ord('g'): mod = 'g'
       elif ch == ord('0'):
         if t == '': c = 0
         else: t += chr(ch)
@@ -68,7 +70,7 @@ def main(stdscr):
       if ch == 27: mod = 'n'; c -= 1 if c else 0
       elif ch != ((ch) & 0x1f) and ch < 128: b[r][c] = ch; c += 1;
       elif ch == curses.KEY_BACKSPACE: c -= 1 if c else 0
-  
+    elif mod == 'g': r = 0; mod = 'n' 
     if ch == (ord('q') & 0x1f): sys.exit()
 os.environ.setdefault('ESCDELAY', '25')
 curses.wrapper(main)
