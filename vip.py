@@ -47,10 +47,11 @@ def main(stdscr):
       elif ch == ord('G'): r = int(t) if len(t) and int(t) < len(b) else len(b)-1
       elif ch == ord('g'): mod = 'g'
       elif ch == ord('w'):
-        if chr(b[r][c]).isalpha():
-          while not chr(b[r][c]).isalpha() and c < len(b[r])-1: c += 1
-        if not chr(b[r][c]).isalpha():
-          while chr(b[r][c]).isalpha() and c < len(b[r])-1: c += 1
+        if b[r][c] == ord(' '):
+          while 1:
+            c += 1
+            if c >= len(b[r])-1: break
+            if b[r][c] != ord(' '): break
       elif ch == ord('0'):
         if t == '': c = 0
         else: t += chr(ch)
