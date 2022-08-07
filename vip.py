@@ -5,7 +5,7 @@ def main(stdscr):
   s = curses.initscr(); s.nodelay(1)
   curses.noecho(); curses.raw(); mod = 'n'; b = []; bf = []
   src = 'noname.txt'; d = 0; sch = ''; rst = []; si = 0 
-  R, C = s.getmaxyx(); R -= 1; x, y, r, c = [0] * 4
+  R, C = s.getmaxyx(); R -= 1; x, y, r, c = [0] * 4; t = ''
   if len(sys.argv) == 2:
     src = sys.argv[1]
     with open(sys.argv[1]) as f:
@@ -31,7 +31,8 @@ def main(stdscr):
     curses.curs_set(1); s.refresh(); ch = -1
     while (ch == -1): ch = s.getch(); d += 1
     if ch == curses.KEY_RESIZE: R, C = s.getmaxyx(); R -= 1; s.refresh(); y = 0
-    if mod == 'n':
+    if chr(ch).isdigit() and chr(ch) != '0': t += chr(ch);
+    elif mod == 'n':
       if ch == ord('i'): mod = 'i'
       elif ch == ord('a'): c += 1; mod = 'i'
       elif ch == ord('A'): c = len(b[r]); mod = 'i'
@@ -39,9 +40,13 @@ def main(stdscr):
       elif ch == ord('O'): b.insert(r, []); mod = 'i'
       elif ch == ord('r'): mod = 'r'
       elif ch == ord('R'): mod = 'R'
-      elif ch == ord('0'): c = 0
-      elif ch == ord('$'): c = len(b[r])-1
       elif ch == ord('x') and len(b[r]): del b[r][c]
+      elif ch == ord('0'):
+        if t == '': c = 0
+        else: t += chr(ch)
+      elif ch == ord('$'):
+        if len(t): r = r + int(t)-1 if (r + int(t)-1) < len(b) else r
+        c = len(b[r])-1
 
       elif ch == ord('h'): c -= 1 if c else 0 
       elif ch == ord('l'): c += 1 if c < len(b[r])-1 else 0 
@@ -50,6 +55,7 @@ def main(stdscr):
       rw = b[r] if r < len(b) else None
       lrw = len(rw) if rw is not None else 0
       if c > lrw-1: c = lrw-1 if lrw else lrw
+      if ch != ord('0'): t = ''
     elif mod == 'i':
       if ch == 27: mod = 'n'; c -= 1 if c else 0
       elif ch != ((ch) & 0x1f) and ch < 128: b[r].insert(c, ch); c += 1;
