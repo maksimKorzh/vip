@@ -26,12 +26,15 @@ def main(stdscr):
       s.clrtoeol()
       try: s.addch('\n')
       except: pass
+    stat = mod + ' "' + src  + '" line ' + str(r+1) + ' of '
+    stat += str(len(b)) + ' --' + str(int(((r+1)*100/(len(b)-1)))) + '%-- ' + 'col ' + str(c)
+    s.addstr(stat); s.clrtoeol()
     curses.curs_set(0);
     s.move(r - y, c - x)
     curses.curs_set(1); s.refresh(); ch = -1
     while (ch == -1): ch = s.getch(); d += 1
     if ch == curses.KEY_RESIZE: R, C = s.getmaxyx(); R -= 1; s.refresh(); y = 0
-    if chr(ch).isdigit() and chr(ch) != '0': t += chr(ch);
+    if chr(ch).isdigit() and chr(ch) != '0' and mod != 'r': t += chr(ch);
     elif mod == 'n':
       if ch == ord('i'): mod = 'i'
       elif ch == ord('a'): c += 1; mod = 'i'
@@ -70,7 +73,7 @@ def main(stdscr):
       if ch == 27: mod = 'n'; c -= 1 if c else 0
       elif ch != ((ch) & 0x1f) and ch < 128: b[r][c] = ch; c += 1;
       elif ch == curses.KEY_BACKSPACE: c -= 1 if c else 0
-    elif mod == 'g': r = 0; mod = 'n' 
+    elif mod == 'g': r = 0; col = 0; mod = 'n' 
     if ch == (ord('q') & 0x1f): sys.exit()
 os.environ.setdefault('ESCDELAY', '25')
 curses.wrapper(main)
