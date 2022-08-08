@@ -44,7 +44,7 @@ def main(stdscr):
       elif ch == ord('r'): mod = 'r'
       elif ch == ord('R'): mod = 'R'
       elif ch == ord('x') and len(b[r]): del b[r][c]
-      elif ch == ord('G'): r = int(t) if len(t) and int(t) < len(b) else len(b)-1
+      elif ch == ord('G'): r = int(t)-1 if len(t) and int(t)-1 < len(b) else len(b)-1
       elif ch == ord('g'): mod = 'g'
       elif ch == ord('w'):
         if b[r][c] == ord(' '):
