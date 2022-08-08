@@ -8,9 +8,11 @@ def main(stdscr):
   R, C = s.getmaxyx(); R -= 1; x, y, r, c = [0] * 4; t = ''
   if len(sys.argv) == 2:
     src = sys.argv[1]
-    with open(sys.argv[1]) as f:
-      cont = f.read().split('\n'); cont = cont[:-1] if len(cont) > 1 else cont
-      for rw in cont: b.append([ord(c) for c in rw])
+    try:
+      with open(sys.argv[1]) as f:
+        cont = f.read().split('\n'); cont = cont[:-1] if len(cont) > 1 else cont
+        for rw in cont: b.append([ord(c) for c in rw])
+    except: b.append([])
   else: b.append([])
   d += 1; bu.insert(d, [deepcopy(b), [r, c]])
   while(True):
@@ -26,9 +28,9 @@ def main(stdscr):
         try: s.addch(rw, cl, b[brw][bcl])
         except: pass 
       s.clrtoeol()
-      try: s.addch('\n')
+      try: s.addstr('\n') if brw < len(b) else s.addstr('~\n')
       except: pass
-    stat = mod + ' "' + src  + (' [modified] ' if d > 0 else '') + '"' + ' line ' + str(r+1)
+    stat = mod + ' "' + src + '"' + ' line ' + str(r+1)
     try: stat += ' of ' + str(len(b)) + ' --' + str(int(((r+1)*100/(len(b))))) + '%--'
     except: pass
     stat += ' col ' + str(c)
@@ -38,7 +40,7 @@ def main(stdscr):
     curses.curs_set(1); s.refresh(); ch = -1
     while (ch == -1): ch = s.getch()
     if ch == curses.KEY_RESIZE: R, C = s.getmaxyx(); R -= 1; s.refresh(); y = 0
-    if chr(ch).isdigit() and chr(ch) != '0' and mod not in 'irR': t += chr(ch);
+    if chr(ch).isdigit() and chr(ch) != '0' and mod not in 'irRoO': t += chr(ch);
     elif mod == 'n':
       if ch == ord('i'): mod = 'i'
       elif ch == ord('a'): c += 1; mod = 'i'
@@ -119,5 +121,6 @@ def main(stdscr):
       cont = ''
       for l in b: cont += ''.join([chr(c) for c in l]) + '\n'
       with open(src, 'w') as f: f.write(cont)
+      s.move(R, 0); s.addstr('Saved'); s.clrtoeol(); s.refresh(); time.sleep(1)
 os.environ.setdefault('ESCDELAY', '25')
 curses.wrapper(main)
