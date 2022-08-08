@@ -68,6 +68,28 @@ def main(stdscr):
                   break
                 if chr(b[r][c]).isalpha(): break
               break
+      elif ch == ord('e'):
+        if b[r][c] == ord(' '):
+          while 1:
+            c += 1
+            if c >= len(b[r])-1:
+              if r < len(b)-1: r += 1; c = 0
+              break
+            if b[r][c] != ord(' '):
+              while 1:
+                c += 1
+                if c >= len(b[r])-1:
+                  if r < len(b)-1: r += 1; c = 0
+                  break
+                if not chr(b[r][c+1]).isalpha(): break
+              break
+        else:
+          while 1:
+            c += 1
+            if c >= len(b[r])-1:
+              if r < len(b)-1: r += 1; c = 0
+              break
+            if not chr(b[r][c+1]).isalpha(): break
       elif ch == ord('0'):
         if t == '': c = 0
         else: t += chr(ch)
@@ -82,6 +104,7 @@ def main(stdscr):
       rw = b[r] if r < len(b) else None
       lrw = len(rw) if rw is not None else 0
       if c > lrw-1: c = lrw-1 if lrw else lrw
+      if ch == ord('A'): c = lrw
       if ch != ord('0'): t = ''
     elif mod == 'i':
       if ch == 27: mod = 'n'; c -= 1 if c else 0
