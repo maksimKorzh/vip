@@ -112,8 +112,7 @@ def main(stdscr):
         num = int(t) if len(t) else 1
         for i in range(num):
           if r+i >= len(b): break
-          bf.append(b[r+i])
-          ln += 1
+          bf.append(b[r+i]); ln += 1
       mod = 'n'; t = ''; s.move(R, 0)
     if (ch != 27 and mod in 'irRdoOyd'): d += 1; bu.insert(d, [deepcopy(b), [r, c]])
     if ch == (ord('q') & 0x1f): sys.exit();
