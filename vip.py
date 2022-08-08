@@ -11,6 +11,7 @@ def main(stdscr):
     with open(sys.argv[1]) as f:
       cont = f.read().split('\n'); cont = cont[:-1] if len(cont) > 1 else cont
       for rw in cont: b.append([ord(c) for c in rw])
+  else: b.append([])
   d += 1; bu.insert(d, [deepcopy(b), [r, c]])
   while(True):
     s.move(0, 0)
@@ -27,7 +28,7 @@ def main(stdscr):
       s.clrtoeol()
       try: s.addch('\n')
       except: pass
-    stat = mod + ' "' + src  + '" line ' + str(r+1)
+    stat = mod + ' "' + src  + (' [modified] ' if d > 0 else '') + '"' + ' line ' + str(r+1)
     try: stat += ' of ' + str(len(b)) + ' --' + str(int(((r+1)*100/(len(b))))) + '%--'
     except: pass
     stat += ' col ' + str(c)
@@ -53,6 +54,7 @@ def main(stdscr):
         if t == '': c = 0
         else: t += chr(ch)
       elif ch == ord('$'):
+        ro = r; co = c
         if len(t): r = r + int(t)-1 if (r + int(t)-1) < len(b) else r
         c = len(b[r])-1
       elif ch == ord('d'): mod = 'd'
@@ -113,5 +115,9 @@ def main(stdscr):
       mod = 'n'; t = ''; s.move(R, 0)
     if (ch != 27 and mod in 'irRdoOyd'): d += 1; bu.insert(d, [deepcopy(b), [r, c]])
     if ch == (ord('q') & 0x1f): sys.exit();
+    if ch == (ord('s') & 0x1f):
+      cont = ''
+      for l in b: cont += ''.join([chr(c) for c in l]) + '\n'
+      with open(src, 'w') as f: f.write(cont)
 os.environ.setdefault('ESCDELAY', '25')
 curses.wrapper(main)
