@@ -89,7 +89,7 @@ def main(stdscr):
             if c >= len(b[r])-1:
               if r < len(b)-1: r += 1; c = 0
               break
-            if not chr(b[r][c+1]).isalpha(): break
+            if chr(b[r][c]).isalpha() and not chr(b[r][c+1]).isalpha(): break
       elif ch == ord('0'):
         if t == '': c = 0
         else: t += chr(ch)
