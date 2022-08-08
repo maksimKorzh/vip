@@ -26,8 +26,8 @@ def main(stdscr):
       s.clrtoeol()
       try: s.addch('\n')
       except: pass
-    stat = mod + ' "' + src  + '" line ' + str(r+1) + ' of '
-    stat += str(len(b)) + ' --' + str(int(((r+1)*100/(len(b)-1)))) + '%-- ' + 'col ' + str(c)
+    stat = t + ' ' + mod + ' "' + src  + '" line ' + str(r+1) + ' of '
+   #stat += str(len(b)) + ' --' + str(int(((r+1)*100/(len(b)-1)))) + '%-- ' + 'col ' + str(c)
     s.addstr(stat); s.clrtoeol()
     curses.curs_set(0);
     s.move(r - y, c - x)
@@ -46,57 +46,19 @@ def main(stdscr):
       elif ch == ord('x') and len(b[r]): del b[r][c]
       elif ch == ord('G'): r = int(t)-1 if len(t) and int(t)-1 < len(b) else len(b)-1
       elif ch == ord('g'): mod = 'g'
-      elif ch == ord('w'):
-        if b[r][c] == ord(' '):
-          while 1:
-            c += 1
-            if c >= len(b[r])-1:
-              if r < len(b)-1: r += 1; c = 0
-              break
-            if b[r][c] != ord(' '): break
-        else:
-          while 1:
-            c += 1
-            if c >= len(b[r])-1:
-              if r < len(b)-1: r += 1; c = 0
-              break
-            if not chr(b[r][c]).isalpha() or b[r][c] == ord(' '):
-              while 1:
-                c += 1
-                if c >= len(b[r])-1:
-                  if r < len(b)-1: r += 1; c = 0
-                  break
-                if chr(b[r][c]).isalpha(): break
-              break
-      elif ch == ord('e'):
-        if b[r][c] == ord(' '):
-          while 1:
-            c += 1
-            if c >= len(b[r])-1:
-              if r < len(b)-1: r += 1; c = 0
-              break
-            if b[r][c] != ord(' '):
-              while 1:
-                c += 1
-                if c >= len(b[r])-1:
-                  if r < len(b)-1: r += 1; c = 0
-                  break
-                if not chr(b[r][c+1]).isalpha(): break
-              break
-        else:
-          while 1:
-            c += 1
-            if c >= len(b[r])-1:
-              if r < len(b)-1: r += 1; c = 0
-              break
-            if chr(b[r][c]).isalpha() and not chr(b[r][c+1]).isalpha(): break
       elif ch == ord('0'):
         if t == '': c = 0
         else: t += chr(ch)
       elif ch == ord('$'):
         if len(t): r = r + int(t)-1 if (r + int(t)-1) < len(b) else r
         c = len(b[r])-1
-
+      elif ch == ord('d'): mod = 'd'
+      elif ch == ord('y'): mod = 'y'
+      elif ch == ord('p'):
+       for l in bf:
+         if len(b) > 1: r += 1
+         b.insert(r, deepcopy(l))
+         
       elif ch == ord('h'): c -= 1 if c else 0 
       elif ch == ord('l'): c += 1 if c < len(b[r])-1 else 0 
       elif ch == ord('k'): r -= 1 if r else 0
@@ -105,7 +67,7 @@ def main(stdscr):
       lrw = len(rw) if rw is not None else 0
       if c > lrw-1: c = lrw-1 if lrw else lrw
       if ch == ord('A'): c = lrw
-      if ch != ord('0'): t = ''
+      if ch != ord('0') and mod not in 'dy': t = ''
     elif mod == 'i':
       if ch == 27: mod = 'n'; c -= 1 if c else 0
       elif ch != ((ch) & 0x1f) and ch < 128: b[r].insert(c, ch); c += 1;
@@ -118,7 +80,29 @@ def main(stdscr):
       if ch == 27: mod = 'n'; c -= 1 if c else 0
       elif ch != ((ch) & 0x1f) and ch < 128: b[r][c] = ch; c += 1;
       elif ch == curses.KEY_BACKSPACE: c -= 1 if c else 0
-    elif mod == 'g': r = 0; col = 0; mod = 'n' 
-    if ch == (ord('q') & 0x1f): sys.exit()
+    elif mod == 'g': r = 0; c = 0; mod = 'n' 
+    elif mod == 'd':
+      if ch == ord('d'):  
+        bf = []; ln = 0
+        num = int(t) if len(t) else 1
+        for i in range(num):
+          if len(b) == 1 and b[0] == []: break
+          bf.append(b[r]); ln += 1
+          if len(b) > 1: del b[r]
+          elif len(b) == 1: b[r] = []
+          if r and r == len(b): r -= 1; c = 0
+      mod = 'n'; t = ''; s.move(R, 0)
+      s.addstr('Delete ' + str(ln) + ' line(s) '); s.clrtoeol(); s.refresh(); time.sleep(1)
+    elif mod == 'y':
+      if ch == ord('y'):  
+        bf = []; ln = 0
+        num = int(t) if len(t) else 1
+        for i in range(num):
+          if r+i >= len(b): break
+          bf.append(b[r+i])
+          ln += 1
+      mod = 'n'; t = ''; s.move(R, 0)
+      s.addstr('Yank ' + str(ln) + ' line(s) '); s.clrtoeol(); s.refresh(); time.sleep(1)
+    if ch == (ord('q') & 0x1f): sys.exit();
 os.environ.setdefault('ESCDELAY', '25')
 curses.wrapper(main)
