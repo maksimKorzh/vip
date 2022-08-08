@@ -50,8 +50,24 @@ def main(stdscr):
         if b[r][c] == ord(' '):
           while 1:
             c += 1
-            if c >= len(b[r])-1: break
+            if c >= len(b[r])-1:
+              if r < len(b)-1: r += 1; c = 0
+              break
             if b[r][c] != ord(' '): break
+        else:
+          while 1:
+            c += 1
+            if c >= len(b[r])-1:
+              if r < len(b)-1: r += 1; c = 0
+              break
+            if not chr(b[r][c]).isalpha() or b[r][c] == ord(' '):
+              while 1:
+                c += 1
+                if c >= len(b[r])-1:
+                  if r < len(b)-1: r += 1; c = 0
+                  break
+                if chr(b[r][c]).isalpha(): break
+              break
       elif ch == ord('0'):
         if t == '': c = 0
         else: t += chr(ch)
